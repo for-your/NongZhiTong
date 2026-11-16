@@ -1,0 +1,41 @@
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+.env.*
+!.env.example
+
+.codegraph/
+
+# 智能体工作目录：存放 memory / outputs / backup，其中 backup 可能含密钥明文快照，绝不能入库
+.workbuddy/
+
+# Bolt.new 脚手架残留
+.bolt
+
+# Vite 加载配置时生成的临时文件（进程被中断时会残留）
+*.timestamp-*.mjs
+
+# 验证产物：CDP 测试脚本输出的截图/日志（不入库、不上传）
+.playwright-mcp/
+/*.png
+

@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Inter 可变字体：本地打包 37KB（latin 子集），中文自动回退到系统中文字体。
+   原先依赖 fonts.googleapis.com，国内加载不到会静默退化为微软雅黑，这是页面质感不足的直接原因之一。 */
+@font-face {
+  font-family: 'Inter Var';
+  src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@layer base {
+  /* 设计令牌。这些数值与 tailwind.config.js 的 theme.extend 保持同步：
+     class 里用 tailwind 语义色（支持 /opacity 修饰符），CSS 内部用这里的变量。 */
+  :root {
+    /* 品牌 */
+    --brand: #2d7a4f;
+    --brand-deep: #1a4a2e;
+    --brand-tint: #eaf3e8;
+    --brand-line: #cfe0c9;
+    --gold: #e8a83e;
+    --clay: #d95c5c;
+
+    /* 中性：收敛为 4 级灰 + 2 级纸底，替换原先散落的 10 种灰 */
+    --ink: #1c1c1c;
+    --ink-soft: #3d423d;
+    --muted: #737a72;
+    --subtle: #9aa199;
+    --faint: #dde1d8;
+    --paper: #f8f6f0;
+    --paper-warm: #f1efe7;
+    --surface: #ffffff;
+
+    --ease-out: cubic-bezier(.22, 1, .36, 1);
+  }
+
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+    font-variant-numeric: tabular-nums; /* 数字等宽：温度、行情、日期纵向对齐 */
+  }
+
+  ::selection { background: #cfe5cc; color: #173d25; }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #eef0e9; }
+  ::-webkit-scrollbar-thumb { background: #c2cebd; border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #a7b8a2; }
+}
+
+@layer components {
+  /* 卡片：杂志风用发丝描边建立层级，阴影只留给真正浮动的层 */
+  .card { @apply rounded-lg border border-faint bg-surface transition-all duration-300; }
+  .card-hover { @apply hover:-translate-y-0.5 hover:border-brand-line hover:shadow-md; }
+
+  /* 眉标：全大写 + 宽字距，杂志排版的标志性元素 */
+  .eyebrow { @apply text-caption font-semibold uppercase tracking-[.22em] text-brand; }
+  .eyebrow-muted { @apply text-caption font-semibold uppercase tracking-[.22em] text-subtle; }
+
+  .rule { @apply h-px w-full bg-faint; }
+
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-small font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:cursor-not-allowed disabled:opacity-45; }
+  .btn-primary { @apply btn bg-brand text-white hover:bg-brand-deep active:scale-[.98]; }
+  .btn-secondary { @apply btn border border-faint bg-surface text-ink hover:border-brand-line hover:bg-brand-tint active:scale-[.98]; }
+  .btn-ghost { @apply btn text-muted hover:bg-paper-warm hover:text-brand; }
+
+  /* 高光扫过：hover 时一道光泽从左划到右 */
+  .btn-sheen { position: relative; overflow: hidden; }
+  .btn-sheen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -70%;
+    width: 45%;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, .38), transparent);
+    transform: skewX(-20deg);
+    transition: left .55s ease;
+    pointer-events: none;
+  }
+  .btn-sheen:hover::after { left: 125%; }
+
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-caption font-semibold; }
+
+  .input-field { @apply w-full rounded-md border border-faint bg-surface px-4 py-3 text-body text-ink placeholder:text-subtle outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/10; }
+
+  /* 下划线由左向右展开 */
+  .link-underline { @apply relative inline-flex items-center gap-1 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full; }
+
+  /* 深色装饰区的颗粒质感：只叠加在 Hero 等大字白字区块，不影响正文阅读 */
+  .grain-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  }
+
+  .skeleton { @apply animate-shimmer rounded-lg bg-gradient-to-r from-[#e9ece4] via-[#f6f8f3] to-[#e9ece4] bg-[length:1000px_100%]; }
+}
+
+@layer utilities {
+  .animate-shimmer { animation: shimmer 2s linear infinite; }
+  .text-balance { text-wrap: balance; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
